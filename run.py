@@ -16,16 +16,13 @@ class ServerResources:
 
     def total_cpu(self) -> float:
         return mean(self.cpu_usage)
-
-x = ServerResources(
-    cpu_usage = psutil.cpu_percent(0.5,percpu=True),
-    mem_usage_percent = psutil.virtual_memory().percent,
-    mem_usage_swap = psutil.swap_memory().percent,
-)
+    
 
 parser = argparse.ArgumentParser(description='Simple Python Script for cpu and memory usage logging')
 
 parser.add_argument("-n", help="Interval in seconds", default=2, required=False)
+
+parser.add_argument("-t", help="Time period to run in hours", default=False, required=False)
 
 parser.add_argument("-f", help="File name", default='log.txt', required=False)
 
@@ -37,7 +34,22 @@ args = parser.parse_args()
 
 header_c = True
 
-for i in range(int(args.i)):
+iter = int(args.i)
+
+if args.t :
+
+    iter = int(int(args.t)*60*60 / int(args.n))
+
+
+print(f'N of interations {iter}')
+
+for i in range(iter):
+
+    x = ServerResources(
+        cpu_usage = psutil.cpu_percent(0.5,percpu=True),
+        mem_usage_percent = psutil.virtual_memory().percent,
+        mem_usage_swap = psutil.swap_memory().percent,
+    )
 
     if path.exists(args.f) :
 
